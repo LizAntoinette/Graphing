@@ -1,0 +1,14 @@
+.dropdown-search {
+  padding: 0.25rem 1rem 0.5rem;
+}
+
+.dropdown-items {
+  min-width: 225px;
+  max-height: 200px;
+  overflow: scroll;
+}
+
+.dropdown-item {
+  position: relative;
+  padding: 0.25rem 1rem;
+}
