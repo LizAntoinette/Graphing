@@ -5,7 +5,7 @@
       role="group"
       aria-label="Button group with nested dropdown"
     >
-      <button type="button" class="btn btn-secondary">Clear</button>
+      <button type="button" class="btn btn-secondary" @click="clearScreen">Clear</button>
       <button type="button" class="btn btn-secondary"   @click="addingVertex">Add Vertex</button>
       <button type="button" class="btn btn-secondary " @click="addingConnection">Add Connection</button>
 
@@ -35,6 +35,7 @@
                 points: line.points
               }"
             />
+            
             <v-circle
               v-for="item in list"
               :key="item.id"
@@ -48,6 +49,16 @@
                 strokeWidth: 2
               }"
             ></v-circle>
+            <v-text 
+              v-for="label in distances"
+              :key="label.id"
+              :config="{
+                x: label.x,
+                y: label.y,
+                text: label.distance
+                
+              }"
+            />
           </v-layer>
         </v-stage>
       </b-card>
@@ -59,6 +70,7 @@ export default {
   data() {
     return {
       list: [],
+      distances: [],
       connection: false,
       vertex: false,
 
@@ -137,16 +149,27 @@ export default {
         }
         this.drawningLine = false;
         const lastLine = this.connections[this.connections.length - 1];
+        var dist = Math.sqrt(Math.pow((e.target.x()-lastLine.points[0]),2)+Math.pow((e.target.y()-lastLine.points[1]),2));
+         this.distances.push({
+            id: Date.now(),
+            distance: dist.toFixed(2),
+            x: Math.min(e.target.x(),lastLine.points[0])+(Math.abs(e.target.x()-lastLine.points[0])/2)+4,
+            y: Math.min(e.target.y(),lastLine.points[1])+(Math.abs(e.target.y()-lastLine.points[1])/2)+4
+          });
+        console.log(this.distances)
         lastLine.points = [
           lastLine.points[0],
           lastLine.points[1],
           e.target.x(),
           e.target.y()
         ];
+        console.log(this.connections);
       }
     },
     clearScreen() {
       this.list = [];
+      this.connections = [];
+      this.distances = [];
     },
     // showCoords(event) {
     //   this.coor_x = event.clientX;
