@@ -229,6 +229,21 @@ export default {
       this.connections = [];
       this.distances = [];
     },
+    createHeuristic(endNode){
+       const size = this.list.length;
+       let heuristic = new Array(size);
+       var dist = Math.sqrt(
+          Math.pow(endNode.x - this.list[i].x, 2) +
+            Math.pow(endNode.y - this.list[i].y, 2)
+        );
+
+       for(let i =0; i < size; i++){
+         heuristic.push({node: i, hval: dist});
+       }
+
+       return heuristic;
+
+    },
     createGrid(){
       const size = this.list.length;
       let grid = new Array(size);
