@@ -18,15 +18,40 @@
       <b-dropdown :text="selectedItem" v-model="selectedItem">
         <b-dropdown-item @click="selectedItem = 'BFS'">BFS</b-dropdown-item>
         <b-dropdown-item @click="selectedItem = 'DFS'">DFS</b-dropdown-item>
-        <b-dropdown-item @click="selectedItem = 'Uniform Cost'"
-          >Uniform Cost</b-dropdown-item
+        <b-dropdown-item @click="selectedItem = 'Uniform Cost'">Uniform Cost</b-dropdown-item
         >
         <b-dropdown-item @click="selectedItem = 'Greedy BFS'"
           >Greedy BFS</b-dropdown-item
         >
         <b-dropdown-item @click="selectedItem = 'A*'">A*</b-dropdown-item>
+        <b-dropdown-item @click="selectedItem = 'CSP'">CSP</b-dropdown-item>
+        <b-dropdown-item @click="selectedItem = 'Generic Algorithm'">Generic Algorithm</b-dropdown-item>
+        
+        
       </b-dropdown>
-      <button type="button" class="btn btn-secondary" @click="runGraph">Run Graph</button>
+      
+    </div>
+    <div class="row m-auto p-4 d-flex justify-content-center">
+      <b-form inline>
+          <label class="mr-sm-2" for="start-node">Start node:</label>
+          <b-form-select
+            id="start-node"
+            class="mb-2 mr-sm-2 mb-sm-0"
+            :options="optionsStartNode"
+            v-model="startNode"
+            :value="null"
+          ></b-form-select>
+          <label class="mr-sm-2" for="end-node">Goal node:</label>
+          <b-form-select
+            id="end-node"
+            class="mb-2 mr-sm-2 mb-sm-0"
+           
+            :options="optionsGoalNode"
+            :value="null"
+          ></b-form-select>
+          
+          <b-button class="btn btn-secondary" @click="runGraph">Run Graph</b-button>
+        </b-form>
     </div>
     <div class="row pt-5">
       <b-card class="col-12 drawArea" style="height: 30rem">
@@ -93,7 +118,9 @@
 export default {
   data() {
     return {
-   
+      optionsStartNode:[],
+      startNode: 0,
+      goalNode: 0,
       list: [],
       edges: [],
       distances: [],
@@ -124,7 +151,29 @@ export default {
   //   console.log(this.addingConnection);
   //   console.log(this.addingVertex);
   // },
+  computed:{
+    // optionsGoalNode(){
+    //    let nodes = [];
+    //    for(let i=0; i<this.optionsStartNode.length; i++){
+    //      if(i !== this.startNode){
+    //         nodes.push(i);
+    //      }
+          
+    //    }
+    //    return nodes;
+
+
+    // } 
+    optionsGoalNode(){
+        return this.optionsStartNode.filter((node) => {
+            return node !== this.startNode;
+        
+        });
+    }   
+  },
   methods: {
+    
+    
     addingConnection() {
       this.connection = !this.connection;
       this.vertex = false;
@@ -138,9 +187,11 @@ export default {
 
     handleClick(evt) {
       if (this.vertex && this.list.length < 20) {
+        this.optionsStartNode.push(this.list.length);
         const stage = evt.target.getStage();
         const pos = stage.getPointerPosition();
         this.list.push(pos);
+        
       
       }
       //this.save();
