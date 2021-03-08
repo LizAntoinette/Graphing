@@ -35,6 +35,7 @@
       <b-form inline>
           <label class="mr-sm-2" for="start-node">Start node:</label>
           <b-form-select
+            @change="changeColorStart"
             id="start-node"
             class="mb-2 mr-sm-2 mb-sm-0"
             :options="optionsStartNode"
@@ -45,7 +46,7 @@
           <b-form-select
             id="end-node"
             class="mb-2 mr-sm-2 mb-sm-0"
-           
+            @change="changeColorGoal"
             :options="optionsGoalNode"
             :value="null"
           ></b-form-select>
@@ -77,6 +78,7 @@
             <v-circle
               v-for="item in list"
               :key="item.id"
+
               :config="{
                 x: item.x,
                 y: item.y,
@@ -86,6 +88,7 @@
                 //draggable:true,
                 stroke: 'black',
                 strokeWidth: 2,
+                id: 'circle'+item.id
               }"
             ></v-circle>
             <v-text
@@ -147,23 +150,9 @@ export default {
     });
     observer.observe(container);
   },
-  // updated: function() {
-  //   console.log(this.addingConnection);
-  //   console.log(this.addingVertex);
-  // },
+ 
   computed:{
-    // optionsGoalNode(){
-    //    let nodes = [];
-    //    for(let i=0; i<this.optionsStartNode.length; i++){
-    //      if(i !== this.startNode){
-    //         nodes.push(i);
-    //      }
-          
-    //    }
-    //    return nodes;
-
-
-    // } 
+   
     optionsGoalNode(){
         return this.optionsStartNode.filter((node) => {
             return node !== this.startNode;
@@ -195,6 +184,26 @@ export default {
       
       }
       //this.save();
+    },
+    changeColorStart(){
+        var id = "#circle"+this.startNode;
+        console.log(id);
+        var stage = this.$refs.stage;
+        var shape = stage.find(id);
+        console.log(shape);
+        shape.fill("#2f9c6e");
+        shape.stroke("#2f9c6e");
+
+
+    },
+    changeColorGoal(){
+        var id = "#circle"+this.goalNode;
+        var stage = this.$refs.stage;
+        var shape = stage.find(id)[0];
+        
+        shape.fill("#290a07");
+        shape.stroke("#290a07");
+
     },
     handleMouseDown(e) {
       if (this.connection) {
