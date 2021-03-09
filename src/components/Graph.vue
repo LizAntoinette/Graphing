@@ -48,6 +48,7 @@
             class="mb-2 mr-sm-2 mb-sm-0"
             @change="changeColorGoal"
             :options="optionsGoalNode"
+            v-model="goalNode"
             :value="null"
           ></b-form-select>
           
@@ -60,7 +61,7 @@
         <v-stage
           :config="stageSize"
           @click="handleClick"
-          ref="stage"
+          ref="konva"
           @mousedown="handleMouseDown"
           @mouseup="handleMouseUp"
           @mousemove="handleMouseMove"
@@ -76,7 +77,8 @@
             />
 
             <v-circle
-              v-for="item in list"
+              
+              v-for="(item, index) in list"
               :key="item.id"
 
               :config="{
@@ -84,11 +86,11 @@
                 y: item.y,
                 
                 radius: 10,
-                fill: 'red',
+                fill: '#a20417',
                 //draggable:true,
-                stroke: 'black',
+                stroke: '#a20417',
                 strokeWidth: 2,
-                id: 'circle'+item.id
+                id:'circle'+index
               }"
             ></v-circle>
             <v-text
@@ -121,9 +123,11 @@
 export default {
   data() {
     return {
-      optionsStartNode:[],
       startNode: 0,
       goalNode: 0,
+      prevStartNode: '',
+      prevGoalNode:'',
+      optionsStartNode:[],   
       list: [],
       edges: [],
       distances: [],
@@ -139,6 +143,7 @@ export default {
         width: 200,
         height: 200,
       },
+      theStage:[]
     };
   },
   mounted: function () {
@@ -180,30 +185,79 @@ export default {
         const stage = evt.target.getStage();
         const pos = stage.getPointerPosition();
         this.list.push(pos);
-        
+        this.theStage = stage;
       
       }
       //this.save();
     },
     changeColorStart(){
+        var tween;
+       
         var id = "#circle"+this.startNode;
+        
         console.log(id);
-        var stage = this.$refs.stage;
-        var shape = stage.find(id);
-        console.log(shape);
-        shape.fill("#2f9c6e");
-        shape.stroke("#2f9c6e");
+        const stage = this.theStage;
 
+       
+        var shape = stage.findOne(id);
+         
+
+        if (tween) {
+          tween.destroy();
+        }
+
+        if(this.prevStartNode !== ''){
+          console.log(this.prevStartNode);
+          var prevShape = stage.findOne(this.prevStartNode);
+          tween = new Konva.Tween({
+            node: prevShape,
+            fill:"#a20417",
+            stroke:"#a20417"
+          }).play();
+          
+        }
+
+        tween = new Konva.Tween({
+          node: shape,
+          fill:"#2f9c6e",
+          stroke:"#2f9c6e"
+        }).play();
+        
+        this.prevStartNode = id;
 
     },
     changeColorGoal(){
+        var tween;
+       
         var id = "#circle"+this.goalNode;
-        var stage = this.$refs.stage;
-        var shape = stage.find(id)[0];
-        
-        shape.fill("#290a07");
-        shape.stroke("#290a07");
+        console.log(id);
+        const stage = this.theStage;
 
+       
+        var shape = stage.findOne(id);
+         
+
+        if (tween) {
+          tween.destroy();
+        } 
+        
+        if(this.prevGoalNode !== ''){
+          var prevShape = stage.findOne(this.prevGoalNode);
+          tween = new Konva.Tween({
+            node: prevShape,
+            fill:"#a20417",
+            stroke:"#a20417"
+          }).play();
+         
+        }
+
+        tween = new Konva.Tween({
+          node: shape,
+          fill:"#004019",
+          stroke:"#004019"
+        }).play();
+        
+        this.prevGoalNode = id;
     },
     handleMouseDown(e) {
       if (this.connection) {
@@ -288,6 +342,10 @@ export default {
       this.list = [];
       this.connections = [];
       this.distances = [];
+      this.startNode = 0;
+      this.goalNode = 0;
+      this.optionsGoalNode = [];
+      this.optionsStartNode = [];
     },
     createHeuristic(endNode){
        const size = this.list.length;
