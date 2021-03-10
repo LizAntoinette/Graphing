@@ -52,7 +52,7 @@
             :value="null"
           ></b-form-select>
           
-          <b-button class="btn btn-secondary" @click="runGraph">Run Graph</b-button>
+          <b-button class="btn btn-secondary" @click="runGraph">Visualize Algo</b-button>
         </b-form>
     </div>
     <div class="row pt-5">
@@ -120,9 +120,18 @@
   </div>
 </template>
 <script>
+import bfs from '../algorithms/breadthFirstSearch';
+import dfs from '../algorithms/depthFirstSearch';
+import greedyBFS from '../algorithms/greedyBestFirstSearch';
+import astar from '../algorithms/astar';
+import uniformCost from '../algorithms/uniformCost';
+import csp from '../algorithms/csp';
+import generic from '../algorithms/generic';
+
 export default {
   data() {
     return {
+      grid: null,
       startNode: 0,
       goalNode: 0,
       prevStartNode: '',
@@ -368,30 +377,56 @@ export default {
 
       //initializing the grid
       for (let i = 0; i < size; i++) {
-          grid[i] = new Array(size);
+          grid[i] = new Array(size).fill(null);
           
       }
       
       //setting the distances in the grid
       for (let j = 0; j < this.distances.length; j++) {
-         let x = this.distances[j].point1;
-         let y = this.distances[j].point2;
-         grid[x][y] = this.distances[j].distance;
-         grid[y][x] = this.distances[j].distance;
+         const dist = this.distances[j]
+         const x = dist.point1;
+         const y = dist.point2;
+         grid[x][y] = grid[y][x] = this.createNode(dist.distance);
       }
-       console.log(grid);
+      
+
+      this.grid = grid;
 
     },
-    runGraph(){
-       if(this.runnableGraph){
-          this.createGrid();
-       }
+    createNode(dist){
+      return {
+        distance: dist,
+        isVisited: false,
+        previousNode: null
+      }
+
     },
-    aStarMethod() {},
-    greedyBFS() {},
-    bfs() {},
-    dfs() {},
-    uniformCost() {},
+    animateAlgorithm(visitedNodesInOrder, calculatedPath){
+
+    },
+    visualizeBFS(){
+       const [visitedNodesInOrder, calculatedPath] = bfs(this.grid, this.startNode, this.goalNode);
+       this.animateAlgorithm(visitedNodesInOrder, calculatedPath);
+    },
+
+    //visualizeDijkstra() {
+  //   const {grid} = this.state;
+  //   const startNode = grid[START_NODE_ROW][START_NODE_COL];
+  //   const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
+  //   const visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
+  //   const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
+  //   this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
+  // }
+    // runGraph(){
+    //    if(this.runnableGraph){
+    //       this.createGrid();
+    //    }
+    // },
+    // aStarMethod() {},
+    // greedyBFS() {},
+    // bfs() {},
+    // dfs() {},
+    // uniformCost() {},
     // showCoords(event) {
     //   this.coor_x = event.clientX;
     //   this.coor_y = event.clientY;
