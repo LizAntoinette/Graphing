@@ -120,20 +120,20 @@
   </div>
 </template>
 <script>
-import bfs from '../algorithms/breadthFirstSearch';
-import dfs from '../algorithms/depthFirstSearch';
-import greedyBFS from '../algorithms/greedyBestFirstSearch';
-import astar from '../algorithms/astar';
-import uniformCost from '../algorithms/uniformCost';
-import csp from '../algorithms/csp';
-import generic from '../algorithms/generic';
+import {bfs} from '../algorithms/breadthFirstSearch';
+// import dfs from '../algorithms/depthFirstSearch';
+// import greedyBFS from '../algorithms/greedyBestFirstSearch';
+// import astar from '../algorithms/astar';
+// import uniformCost from '../algorithms/uniformCost';
+// import csp from '../algorithms/csp';
+// import generic from '../algorithms/generic';
 
 export default {
   data() {
     return {
       grid: null,
-      startNode: 0,
-      goalNode: 0,
+      startNode: null,
+      goalNode: null,
       prevStartNode: '',
       prevGoalNode:'',
       optionsStartNode:[],   
@@ -155,6 +155,9 @@ export default {
       theStage:[]
     };
   },
+  created: function() {
+     this.initializeGrid();
+  },
   mounted: function () {
     //For Dynamic Stage Size
     const container = document.querySelector(".drawArea");
@@ -174,18 +177,18 @@ export default {
         });
     }   
   },
+
+  
   methods: {
-    
     
     addingConnection() {
       this.connection = !this.connection;
       this.vertex = false;
-      console.log(this.connection);
+      
     },
     addingVertex() {
       this.connection = false;
       this.vertex = !this.vertex;
-      console.log(this.vertex);
     },
 
     handleClick(evt) {
@@ -197,7 +200,6 @@ export default {
         this.theStage = stage;
       
       }
-      //this.save();
     },
     changeColorStart(){
         var tween;
@@ -328,12 +330,12 @@ export default {
             Math.min(e.target.y(), lastLine.points[1]) +
             Math.abs(e.target.y() - lastLine.points[1]) / 2 +
             4,
-          point1: indexOfPoint1,
-          point2: indexOfPoint2
         });
+        this.grid[indexOfPoint1][indexOfPoint2] = this.createNode(indexOfPoint1, indexOfPoint2, dist.toFixed(2));
+        this.grid[indexOfPoint2][indexOfPoint1] = this.createNode(indexOfPoint2, indexOfPoint1, dist.toFixed(2));
+        console.log(this.grid);
         console.log(this.distances);
-        //    this.edges[indexOfPoint1][indexOfPoint2] = dist.toFixed(2);
-        //  console.log(this.edges);
+        
         lastLine.points = [
           lastLine.points[0],
           lastLine.points[1],
@@ -359,42 +361,36 @@ export default {
     createHeuristic(endNode){
        const size = this.list.length;
        let heuristic = new Array(size);
-       var dist = Math.sqrt(
-          Math.pow(endNode.x - this.list[i].x, 2) +
-            Math.pow(endNode.y - this.list[i].y, 2)
-        );
+       
 
        for(let i =0; i < size; i++){
+         var dist = Math.sqrt(
+            Math.pow(endNode.x - this.list[i].x, 2) +
+              Math.pow(endNode.y - this.list[i].y, 2)
+          );
          heuristic.push({node: i, hval: dist});
        }
 
        return heuristic;
 
     },
-    createGrid(){
-      const size = this.list.length;
-      let grid = new Array(size);
-
-      //initializing the grid
-      for (let i = 0; i < size; i++) {
-          grid[i] = new Array(size).fill(null);
-          
+    initializeGrid(){
+      const grid = [];
+      for (let row = 0; row < 20; row++) {
+        const currentRow = [];
+        for (let col = 0; col < 20; col++) {
+          currentRow.push(this.createNode(row, col, 0));
+        }
+        grid.push(currentRow);
       }
-      
-      //setting the distances in the grid
-      for (let j = 0; j < this.distances.length; j++) {
-         const dist = this.distances[j]
-         const x = dist.point1;
-         const y = dist.point2;
-         grid[x][y] = grid[y][x] = this.createNode(dist.distance);
-      }
-      
-
       this.grid = grid;
-
+      console.log('This is the Initialized Grid');
+      console.log(this.grid);
     },
-    createNode(dist){
+    createNode(x, y, dist){
       return {
+        point1: x,
+        point2: y,
         distance: dist,
         isVisited: false,
         previousNode: null
@@ -405,8 +401,21 @@ export default {
 
     },
     visualizeBFS(){
-       const [visitedNodesInOrder, calculatedPath] = bfs(this.grid, this.startNode, this.goalNode);
-       this.animateAlgorithm(visitedNodesInOrder, calculatedPath);
+       console.log("This is working");
+       console.log(this.selectedItem);
+       const STARTNODE = this.grid[this.startNode][this.startNode];
+       const GOALNODE = this.goalNode;
+       const size = this.list.length;
+       console.log("Again this part is working");
+       console.log(STARTNODE);
+       console.log(GOALNODE);
+       console.log(size);
+       const [visitedNodesInOrder, calculatedPath] = bfs(this.grid, STARTNODE, GOALNODE, size);
+       console.log("BFS visited nodes in order:");
+       console.log(visitedNodesInOrder);
+       console.log("BFS the calculated path:");
+       console.log(calculatedPath);
+      // this.animateAlgorithm(visitedNodesInOrder, calculatedPath);
     },
 
     //visualizeDijkstra() {
@@ -417,11 +426,14 @@ export default {
   //   const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
   //   this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
   // }
-    // runGraph(){
-    //    if(this.runnableGraph){
-    //       this.createGrid();
-    //    }
-    // },
+    runGraph(){
+       if(this.runnableGraph){
+          if(this.selectedItem === "BFS"){
+            this.visualizeBFS();
+          }
+
+       }
+    },
     // aStarMethod() {},
     // greedyBFS() {},
     // bfs() {},
