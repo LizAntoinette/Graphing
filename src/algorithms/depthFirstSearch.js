@@ -1,4 +1,4 @@
-export function dfs(grid = [], startNode, finishNode) {
+export function dfs(grid, startNode, finishNode, size) {
   const stack = [];
   const visitedNodesInOrder = [];
 
@@ -8,12 +8,11 @@ export function dfs(grid = [], startNode, finishNode) {
   while (!!stack.length) {
       let node = stack.pop();
 
-      if (finishNode === node)
-          return [visitedNodesInOrder, calculatePath(finishNode)];
+      if (finishNode === node.point2)
+          return [visitedNodesInOrder, calculatePath(node)];
 
-      if (node.isWall) continue;
 
-      const neighbors = getAllNeighbors(grid, node);
+      const neighbors = getAllNeighbors(grid, node, size);
 
       for (const neighbor of neighbors) {
           neighbor.isVisited = true;
@@ -23,7 +22,7 @@ export function dfs(grid = [], startNode, finishNode) {
       }
   }
 
-  return [visitedNodesInOrder, calculatePath(finishNode)];
+  return [visitedNodesInOrder, calculatePath(startNode)];
 }
 
 function calculatePath(finishNode) {
@@ -36,53 +35,18 @@ function calculatePath(finishNode) {
   return shortestPathNodes;
 }
 
-function getAllNeighbors(grid = [], node) {
-  const ROWS = grid.length;
-  const COLS = grid[0].length;
+function getAllNeighbors(grid, node, size) {
 
-  const { row, col } = node;
-  const neighbors = [];
-
-  if (
-      row + 1 >= 0 &&
-      row + 1 < ROWS &&
-      col >= 0 &&
-      col < COLS &&
-      !grid[row + 1][col].isVisited &&
-      !grid[row + 1][col].isWall
-  ) {
-      neighbors.push(grid[row + 1][col]);
+    const neighbors = [];
+    const point2 = node.point2;
+     
+    for(let i=0; i <size; i++){
+      var tempNode = grid[point2][i]; 
+      if((!tempNode.isVisited) && tempNode.distance > 0){
+          grid[i][point2].isVisited = true;
+          neighbors.push(tempNode);
+      }
+    }
+     return neighbors;
   }
-  if (
-      row - 1 >= 0 &&
-      row - 1 < ROWS &&
-      col >= 0 &&
-      col < COLS &&
-      !grid[row - 1][col].isWall &&
-      !grid[row - 1][col].isVisited
-  ) {
-      neighbors.push(grid[row - 1][col]);
-  }
-  if (
-      row >= 0 &&
-      row < ROWS &&
-      col - 1 >= 0 &&
-      col - 1 < COLS &&
-      !grid[row][col - 1].isWall &&
-      !grid[row][col - 1].isVisited
-  ) {
-      neighbors.push(grid[row][col - 1]);
-  }
-  if (
-      row >= 0 &&
-      row < ROWS &&
-      col + 1 >= 0 &&
-      col + 1 < COLS &&
-      !grid[row][col + 1].isWall &&
-      !grid[row][col + 1].isVisited
-  ) {
-      neighbors.push(grid[row][col + 1]);
-  }
-
-  return neighbors;
-}
+  

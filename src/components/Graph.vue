@@ -121,7 +121,7 @@
 </template>
 <script>
 import {bfs} from '../algorithms/breadthFirstSearch';
-// import dfs from '../algorithms/depthFirstSearch';
+import {dfs} from '../algorithms/depthFirstSearch';
 // import greedyBFS from '../algorithms/greedyBestFirstSearch';
 // import astar from '../algorithms/astar';
 // import uniformCost from '../algorithms/uniformCost';
@@ -400,23 +400,28 @@ export default {
     animateAlgorithm(visitedNodesInOrder, calculatedPath){
 
     },
+    visualizeDFS(){
+       const STARTNODE = this.grid[this.startNode][this.startNode];
+       const GOALNODE = this.goalNode;
+       const size = this.list.length;
+       const [visitedNodesInOrder, calculatedPath] =  dfs(this.grid, STARTNODE, GOALNODE, size);
+       console.log("DFS visited nodes in order:");
+       console.log(visitedNodesInOrder);
+       console.log("DFS the calculated path:");
+       console.log(calculatedPath);
+
+      // this.animateAlgorithm(visitedNodesInOrder, calculatedPath);
+    },
     visualizeBFS(){
-       console.log("This is working");
        console.log(this.selectedItem);
        const STARTNODE = this.grid[this.startNode][this.startNode];
        const GOALNODE = this.goalNode;
        const size = this.list.length;
-       console.log("Again this part is working");
-       console.log(STARTNODE);
-       console.log(GOALNODE);
-       console.log(size);
        const [visitedNodesInOrder, calculatedPath] = bfs(this.grid, STARTNODE, GOALNODE, size);
-       console.log("BFS visited nodes in order:");
-       console.log(visitedNodesInOrder);
-       console.log("BFS the calculated path:");
-       console.log(calculatedPath);
+       
       // this.animateAlgorithm(visitedNodesInOrder, calculatedPath);
     },
+
 
     //visualizeDijkstra() {
   //   const {grid} = this.state;
@@ -430,6 +435,9 @@ export default {
        if(this.runnableGraph){
           if(this.selectedItem === "BFS"){
             this.visualizeBFS();
+          }
+          if(this.selectedItem === "DFS"){
+            this.visualizeDFS();
           }
 
        }
