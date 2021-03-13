@@ -122,8 +122,8 @@
 <script>
 import {bfs} from '../algorithms/breadthFirstSearch';
 import {dfs} from '../algorithms/depthFirstSearch';
-// import greedyBFS from '../algorithms/greedyBestFirstSearch';
-// import astar from '../algorithms/astar';
+//import greedyBFS from '../algorithms/greedyBestFirstSearch';
+import {astar} from '../algorithms/astar';
 // import uniformCost from '../algorithms/uniformCost';
 // import csp from '../algorithms/csp';
 // import generic from '../algorithms/generic';
@@ -400,28 +400,32 @@ export default {
     animateAlgorithm(visitedNodesInOrder, calculatedPath){
 
     },
-    visualizeDFS(){
-       const STARTNODE = this.grid[this.startNode][this.startNode];
-       const GOALNODE = this.goalNode;
-       const size = this.list.length;
-       const [visitedNodesInOrder, calculatedPath] =  dfs(this.grid, STARTNODE, GOALNODE, size);
-       console.log("DFS visited nodes in order:");
-       console.log(visitedNodesInOrder);
-       console.log("DFS the calculated path:");
-       console.log(calculatedPath);
+    visualizeAlgorithm(selectedAlgo){
+        const STARTNODE = this.grid[this.startNode][this.startNode];
+        const GOALNODE = this.goalNode;
+        const size = this.list.length;
+        const heuristic = this.
+        const [visitedNodesInOrder, calculatedPath]  = [[],[]];
+        if(selectedAlgo == "BFS"){
+          [visitedNodesInOrder, calculatedPath] =  bfs(this.grid, STARTNODE, GOALNODE, size);
+        }
+        else if(selectedAlgo === "DFS"){
+          [visitedNodesInOrder, calculatedPath] =  dfs(this.grid, STARTNODE, GOALNODE, size);
+        }
+        else if (selectedAlgo == "A*"){
+           [visitedNodesInOrder, calculatedPath] = astar()
+        }
+        else{
+          console.log("Select Algorithm to Visualize");
+        }
 
-      // this.animateAlgorithm(visitedNodesInOrder, calculatedPath);
+        console.log("DFS visited nodes in order:");
+        console.log(visitedNodesInOrder);
+        console.log("DFS the calculated path:");
+        console.log(calculatedPath);
+        // this.animateAlgorithm(visitedNodesInOrder, calculatedPath);
     },
-    visualizeBFS(){
-       console.log(this.selectedItem);
-       const STARTNODE = this.grid[this.startNode][this.startNode];
-       const GOALNODE = this.goalNode;
-       const size = this.list.length;
-       const [visitedNodesInOrder, calculatedPath] = bfs(this.grid, STARTNODE, GOALNODE, size);
-       
-      // this.animateAlgorithm(visitedNodesInOrder, calculatedPath);
-    },
-
+    
 
     //visualizeDijkstra() {
   //   const {grid} = this.state;
@@ -433,12 +437,9 @@ export default {
   // }
     runGraph(){
        if(this.runnableGraph){
-          if(this.selectedItem === "BFS"){
-            this.visualizeBFS();
-          }
-          if(this.selectedItem === "DFS"){
-            this.visualizeDFS();
-          }
+          
+            this.visualizeAlgorithm(this.selectedItem);
+          
 
        }
     },

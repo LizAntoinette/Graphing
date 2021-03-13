@@ -1,62 +1,92 @@
-import PriorityQueue from "js-priority-queue";
+export function astar(grid, startNode, finishNode, size) {
+  const closedlist = [];
+  const openlist = [];
 
-export function astar(startNode, endNode, graph, heuristic, size) {
-  let visited = Array(size).fill(false);
-  let pq = new PriorityQueue(); //states??
-  let actions = [];
-  pq.enqueue((startNode, []), heuristic(startNode));
-  let nCost = 0;
-  while (pq.length !== 0) {
-    let node = pq.dequeue();
-    actions.push(node);
-    if (node === endNode) {
-      return actions;
-    }
-    if (!visited[node]) {
-      let nb = getNeighboors(graph[node]);
-      for (let j = 0; j < nb.length; j++) {
-        if (!visited[j]) {
-          let distToNode = graph[node][j];
-          let distances = node[j] + distToNode;
-          nCost = distances + heuristic[j];
-          actions.push((nb[j], distances), nCost);
-        }
+  startNode.cost = {
+    F: 0,
+    G: 0,
+    H: 0
+  };
+
+  openlist.push(startNode);
+
+  while (!!openlist.length) {
+    openlist.sort((a, b) => a.cost.F - b.cost.F);
+    const current = openlist.shift();
+
+    closedlist.push(current);
+
+    if (current === finishNode) return [closedlist, calculatePath(node)];
+
+    const neighbors = getAllNeighbors(grid, current, size);
+
+    for (let i = 0; i < neighbors.length; i++) {
+      const nNode = neighbors[i];
+      nNode.isVisited = true;
+      if (closedlist.includes(nNode)) continue;
+
+      nNode.cost.G = calculateCost(nNode, startNode, "E");
+      nNode.cost.H = calculateCost(nNode, finishNode, "E");
+      nNode.cost.F = nNode.cost.G + nNode.cost.H;
+
+      if (!openlist.includes(nNode)) {
+        nNode.previousNode = current;
+        openlist.push(nNode);
       }
     }
-    visited[node] = true;
   }
-  return actions;
+  return [closedlist, calculatePath(finishNode)];
 }
 
-function getNeighboors(arr) {
-  let neighboors = [];
-  for (let i = 0; i < arr.length; i++) {
-    if (arr[i] !== 0) {
-      neighboors.push(i);
+function calculateCost(currentNode, node, distanceType) {
+  switch (distanceType) {
+    // Euclidean Distance
+    case "E":
+      return Math.floor(
+        Math.sqrt(
+          Math.pow(currentNode.row - node.row, 2) +
+            Math.pow(currentNode.col - node.col, 2)
+        ) * 10
+      );
+
+    // Manhattan Distance
+    case "M":
+      return (
+        Math.abs(currentNode.row - node.row) +
+        Math.abs(currentNode.col - node.col)
+      );
+
+    // Diagonal Distance
+    case "D":
+      return Math.max(
+        Math.abs(currentNode.row - node.row),
+        Math.abs(currentNode.col - node.col)
+      );
+    default:
+      return 0;
+  }
+}
+
+function getAllNeighbors(grid, node, size) {
+  const neighbors = [];
+  const point2 = node.point2;
+
+  for (let i = 0; i < size; i++) {
+    var tempNode = grid[point2][i];
+    if (!tempNode.isVisited && tempNode.distance > 0) {
+      grid[i][point2].isVisited = true;
+      neighbors.push(tempNode);
     }
   }
-  return neighboors;
+  return neighbors;
 }
-// def aStarSearch(problem, heuristic=nullHeuristic):
-//     "Search the node that has the lowest combined cost and heuristic first."
-//     start = problem.getStartState()
-//     exploredState = []
-//     states = util.PriorityQueue()
-//     states.push((start, []), nullHeuristic(start, problem))
-//     nCost = 0
-//     while not states.isEmpty():
-//         state, actions = states.pop()
-//         if problem.isGoalState(state):
-//             return actions
-//         if state not in exploredState:
-//             successors = problem.getSuccessors(state)
-//             for succ in successors:
-//                 coordinates = succ[0]
-//                 if coordinates not in exploredState:
-//                     directions = succ[1]
-//                     nActions = actions + [directions]
-//                     nCost = problem.getCostOfActions(nActions) + heuristic(coordinates, problem)
-//                     states.push((coordinates, actions + [directions]), nCost)
-//         exploredState.append(state)
-//     return actions
-//     util.raiseNotDefined()
+
+function calculatePath(finishNode) {
+  const shortestPathNodes = [];
+  let currentNode = finishNode;
+  while (currentNode !== null) {
+    shortestPathNodes.unshift(currentNode);
+    currentNode = currentNode.previousNode;
+  }
+  return shortestPathNodes;
+}
