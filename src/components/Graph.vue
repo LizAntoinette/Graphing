@@ -73,6 +73,7 @@
               :config="{
                 stroke: 'black',
                 points: line.points,
+                id:'line'+ line.x+ line.y
               }"
             />
 
@@ -335,7 +336,8 @@ export default {
         this.grid[indexOfPoint2][indexOfPoint1] = this.createNode(indexOfPoint2, indexOfPoint1, dist.toFixed(2));
         console.log(this.grid);
         console.log(this.distances);
-        
+        lastLine.x = indexOfPoint1;
+        lastLine.y = indexOfPoint2;
         lastLine.points = [
           lastLine.points[0],
           lastLine.points[1],
@@ -397,34 +399,116 @@ export default {
       }
 
     },
-    animateAlgorithm(visitedNodesInOrder, calculatedPath){
+    // animateAlgorithm(visitedNodesInOrder, calculatedPath){
 
-    },
-    visualizeAlgorithm(selectedAlgo){
-        const STARTNODE = this.grid[this.startNode][this.startNode];
-        const GOALNODE = this.goalNode;
-        const size = this.list.length;
-        const heuristic = this.
-        const [visitedNodesInOrder, calculatedPath]  = [[],[]];
-        if(selectedAlgo == "BFS"){
-          [visitedNodesInOrder, calculatedPath] =  bfs(this.grid, STARTNODE, GOALNODE, size);
-        }
-        else if(selectedAlgo === "DFS"){
-          [visitedNodesInOrder, calculatedPath] =  dfs(this.grid, STARTNODE, GOALNODE, size);
-        }
-        else if (selectedAlgo == "A*"){
-           [visitedNodesInOrder, calculatedPath] = astar()
-        }
-        else{
-          console.log("Select Algorithm to Visualize");
-        }
+    // },
+    // visualizeAlgorithm(selectedAlgo){
+    //     const STARTNODE = this.grid[this.startNode][this.startNode];
+    //     const GOALNODE = this.goalNode;
+    //     const size = this.list.length;
+    //     const heuristic = this.heuristic;
+    //     // const [visitedNodesInOrder, calculatedPath]  = [[],[]];
+    //     // if(selectedAlgo == "BFS"){
+    //       [visitedNodesInOrder, calculatedPath] =  bfs(this.grid, STARTNODE, GOALNODE, size);
+    //     }
+    //     else if(selectedAlgo === "DFS"){
+    //       [visitedNodesInOrder, calculatedPath] =  dfs(this.grid, STARTNODE, GOALNODE, size);
+    //     }
+    //     else if (selectedAlgo == "A*"){
+    //        [visitedNodesInOrder, calculatedPath] = astar()
+    //     }
+    //     else{
+    //       console.log("Select Algorithm to Visualize");
+    //     }
+    animateAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder) {
+      let stage = this.theStage;
+      var tweenShape, tweenLine;
 
-        console.log("DFS visited nodes in order:");
-        console.log(visitedNodesInOrder);
-        console.log("DFS the calculated path:");
-        console.log(calculatedPath);
-        // this.animateAlgorithm(visitedNodesInOrder, calculatedPath);
+      for (let i = 0; i <= visitedNodesInOrder.length; i++) {
+        if (i === visitedNodesInOrder.length) {
+          setTimeout(() => {
+            this.animateShortestPath(nodesInShortestPathOrder);
+          }, 10 * i);
+          return;
+        }
+        setTimeout(() => {
+          const node = visitedNodesInOrder[i];
+
+          var idCircle = "#circle"+node.point1;
+          console.log(idCircle);
+          var shape = stage.findOne(idCircle);
+          
+
+          var idLine = "#line"+node.point1+ node.point2;
+          var line = stage.findOne(idLine);
+          console.log(line);
+
+          if (tweenLine ||tweenShape) {
+            tweenLine.destroy();
+            tweenShape.destroy();
+          } 
+          
+          
+            tweenShape = new Konva.Tween({
+              node: shape,
+              fill:"#ed81c47",
+              stroke:"#ed81c4"
+            }).play();
+         
+
+      
+
+            tweenLine = new Konva.Tween({
+              node: shape,
+              fill:"#ed4255",
+              stroke:"#ed4255"
+            }).play();
+          }, 10 * i);
+        }
     },
+
+  animateShortestPath(nodesInShortestPathOrder) {
+    for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
+      setTimeout(() => {
+        const node = nodesInShortestPathOrder[i];
+        document.getElementById(`node-${node.row}-${node.col}`).className =
+          'node node-shortest-path';
+      }, 50 * i);
+    }
+  },
+    visualizeBFS(){
+       console.log("This is working");
+       console.log(this.selectedItem);
+       const STARTNODE = this.grid[this.startNode][this.startNode];
+       const GOALNODE = this.goalNode;
+       const size = this.list.length;
+       console.log("Again this part is working");
+       console.log(STARTNODE);
+       console.log(GOALNODE);
+       console.log(size);
+       const [visitedNodesInOrder, calculatedPath] = bfs(this.grid, STARTNODE, GOALNODE, size);
+       console.log("BFS visited nodes in order:");
+       console.log(visitedNodesInOrder);
+       console.log("BFS the calculated path:");
+       console.log(calculatedPath);
+      
+    },
+    
+  
+    runGraph(){
+       if(this.runnableGraph){
+          if(this.selectedItem === "BFS"){
+            this.visualizeBFS();
+          }
+       }
+    },
+
+    //     console.log("DFS visited nodes in order:");
+    //     console.log(visitedNodesInOrder);
+    //     console.log("DFS the calculated path:");
+    //     console.log(calculatedPath);
+    //     // this.animateAlgorithm(visitedNodesInOrder, calculatedPath);
+    // },
     
 
     //visualizeDijkstra() {
