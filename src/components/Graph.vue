@@ -488,20 +488,20 @@ export default {
     }
   },
     visualizeBFS(){
-       console.log("This is working");
-       console.log(this.selectedItem);
        const STARTNODE = this.grid[this.startNode][this.startNode];
        const GOALNODE = this.goalNode;
        const size = this.list.length;
-       console.log("Again this part is working");
-       console.log(STARTNODE);
-       console.log(GOALNODE);
-       console.log(size);
        const [visitedNodesInOrder, calculatedPath] = bfs(this.grid, STARTNODE, GOALNODE, size);
-       console.log("BFS visited nodes in order:");
-       console.log(visitedNodesInOrder);
-       console.log("BFS the calculated path:");
-       console.log(calculatedPath);
+       
+       this.animateAlgorithm(visitedNodesInOrder, calculatedPath);
+      
+    },
+    visualizeDFS(){
+       const STARTNODE = this.grid[this.startNode][this.startNode];
+       const GOALNODE = this.goalNode;
+       const size = this.list.length;
+       const [visitedNodesInOrder, calculatedPath] = dfs(this.grid, STARTNODE, GOALNODE, size);
+       
        this.animateAlgorithm(visitedNodesInOrder, calculatedPath);
       
     },
@@ -509,8 +509,12 @@ export default {
   
     runGraph(){
        if(this.runnableGraph){
-          if(this.selectedItem === "BFS"){
+          const item = this.selectedItem;
+          if(item === "BFS"){
             this.visualizeBFS();
+          }
+          else if(item === "DFS"){
+            this.visualizeDFS();
           }
        }
     },
