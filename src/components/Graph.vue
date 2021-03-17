@@ -73,7 +73,8 @@
               :config="{
                 stroke: 'black',
                 points: line.points,
-                id:'line'+ line.x+ line.y
+                id: line.id
+                
               }"
             />
 
@@ -336,14 +337,14 @@ export default {
         this.grid[indexOfPoint2][indexOfPoint1] = this.createNode(indexOfPoint2, indexOfPoint1, dist.toFixed(2));
         console.log(this.grid);
         console.log(this.distances);
-        lastLine.x = indexOfPoint1;
-        lastLine.y = indexOfPoint2;
+        lastLine.id= "line"+indexOfPoint1+indexOfPoint2;
         lastLine.points = [
           lastLine.points[0],
           lastLine.points[1],
           e.target.x(),
           e.target.y(),
         ];
+        console.log("The connections");
         console.log(this.connections);
         console.log(this.list);
         if(this.connections.length < 2){
@@ -431,7 +432,7 @@ export default {
           }, 10 * i);
           return;
         }
-        setTimeout(() => {
+        
           const node = visitedNodesInOrder[i];
 
           var idCircle = "#circle"+node.point1;
@@ -451,29 +452,66 @@ export default {
           
             tweenShape = new Konva.Tween({
               node: shape,
-              fill:"#ed81c47",
+              fill:"#ed81c4",
               stroke:"#ed81c4"
-            }).play();
+            });
          
-
+            console.log("Shape is working");
       
 
             tweenLine = new Konva.Tween({
-              node: shape,
-              fill:"#ed4255",
-              stroke:"#ed4255"
-            }).play();
+              node: line,
+              fill:"#ed81c4",
+              stroke:"#ed81c4"
+            });
+            console.log("Line is working");
+          setTimeout(() => {
+            tweenShape.play();
+            tweenLine.play();
           }, 10 * i);
+
         }
     },
 
   animateShortestPath(nodesInShortestPathOrder) {
+    let stage = this.theStage;
+    var tweenShape, tweenLine;
     for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
-      setTimeout(() => {
         const node = nodesInShortestPathOrder[i];
-        document.getElementById(`node-${node.row}-${node.col}`).className =
-          'node node-shortest-path';
-      }, 50 * i);
+        var idCircle = "#circle"+node.point1;
+        console.log(idCircle);
+        var shape = stage.findOne(idCircle);
+          
+
+        var idLine = "#line"+node.point1+ node.point2;
+        var line = stage.findOne(idLine);
+        console.log(line);
+
+        if (tweenLine ||tweenShape) {
+          tweenLine.destroy();
+          tweenShape.destroy();
+        } 
+          
+        tweenShape = new Konva.Tween({
+          node: shape,
+          fill:"#ed81c4",
+          stroke:"#ed81c4"
+        });
+         
+        console.log("Shape is working");
+      
+
+        tweenLine = new Konva.Tween({
+          node: line,
+          fill:"#ed81c4",
+          stroke:"#ed81c4"
+        });
+        console.log("Line is working");
+
+        setTimeout(() => {
+          tweenShape.play();
+          tweenLine.play();
+        }, 50 * i);
     }
   },
     visualizeBFS(){
@@ -491,6 +529,7 @@ export default {
        console.log(visitedNodesInOrder);
        console.log("BFS the calculated path:");
        console.log(calculatedPath);
+       this.animateAlgorithm(visitedNodesInOrder, calculatedPath);
       
     },
     
@@ -519,14 +558,14 @@ export default {
   //   const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
   //   this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
   // }
-    runGraph(){
-       if(this.runnableGraph){
+    // runGraph(){
+    //    if(this.runnableGraph){
           
-            this.visualizeAlgorithm(this.selectedItem);
+    //         this.visualizeAlgorithm(this.selectedItem);
           
 
-       }
-    },
+    //    }
+    // },
     // aStarMethod() {},
     // greedyBFS() {},
     // bfs() {},
