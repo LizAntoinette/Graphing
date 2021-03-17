@@ -422,73 +422,28 @@ export default {
     //       console.log("Select Algorithm to Visualize");
     //     }
     animateAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder) {
-      let stage = this.theStage;
-      var tweenShape, tweenLine;
+      
       
       for (let i = 0; i < visitedNodesInOrder.length; i++) {
-        // var tweenShape, tweenLine;
-        //  if (i === visitedNodesInOrder.length) {
-        //      console.log("This got here ...")
-        //      setTimeout(() => {
-        //         this.animateShortestPath(nodesInShortestPathOrder);
-        //      }, 10 * i);
-        // //   return;
-        //  }
         
-          const node = visitedNodesInOrder[i];
-
-          var idCircle = "#circle"+node.point2;
-          console.log(idCircle);
-          var shape = stage.findOne(idCircle);
-          
-
-          
-          var idLine = "line"+node.point1+node.point2;
-          var idLine2 = "line"+node.point2+node.point1;
-          let idL = this.connections.filter(line => line.id === idLine|| line.id === idLine2);
-
-          console.log(idL[0].id);
-          var idOfLine = "#"+idL[0].id;
-          var line = stage.findOne(idOfLine);
-
-        
-          tweenLine = new Konva.Tween({
-              node: line,
-              duration:i,
-              fill:"#ed81c4",
-              stroke:"#ed81c4"
-            }).play();
-            console.log("Line is working");
-          
-            tweenShape = new Konva.Tween({
-              node: shape,
-              duration:i,
-              fill:"#ed81c4",
-              stroke:"#ed81c4"
-            }).play();
+          setTimeout(() => {
+                this.colorNode(visitedNodesInOrder[i], "#ed81c4");
+          }, i*800);
          
-            console.log("Shape is working");
-      
-            
-            
-        //   setTimeout(() => {
-        //     tweenLine.play();
-        //     tweenShape.play();
-            
-      
 
         }
         setTimeout(() => {
                 this.animateShortestPath(nodesInShortestPathOrder);
-             }, 800);
+        }, visitedNodesInOrder.length*1000);
         
     },
 
-  animateShortestPath(nodesInShortestPathOrder) {
-    let stage = this.theStage;
-    var tweenShape, tweenLine;
-    for (let i = 1; i < nodesInShortestPathOrder.length; i++) {
-           const node = nodesInShortestPathOrder[i];
+  colorNode(visitedNode, color){
+          let stage = this.theStage;
+          var tweenShape, tweenLine;
+          var connections = this.connections;
+          const node = visitedNode;
+
           var idCircle = "#circle"+node.point2;
           console.log(idCircle);
           var shape = stage.findOne(idCircle);
@@ -497,7 +452,7 @@ export default {
           
           var idLine = "line"+node.point1+node.point2;
           var idLine2 = "line"+node.point2+node.point1;
-          let idL = this.connections.filter(line => line.id === idLine|| line.id === idLine2);
+          let idL =connections.filter(line => line.id === idLine|| line.id === idLine2);
 
           console.log(idL[0].id);
           var idOfLine = "#"+idL[0].id;
@@ -506,20 +461,29 @@ export default {
         
           tweenLine = new Konva.Tween({
               node: line,
-              duration:i,
-              fill:"#ed4255",
-              stroke:"#ed4255"
-            }).play();
-            console.log("Line is working");
+              
+              fill:color,
+              stroke:color
+          }).play();
+          console.log("Line is working");
           
-            tweenShape = new Konva.Tween({
-              node: shape,
-              duration:i,
-              fill:"#ed4255",
-              stroke:"#ed4255"
-            }).play();
+          tweenShape = new Konva.Tween({
+            node: shape,
+        
+            fill:color,
+            stroke:color
+          }).play();
          
-            console.log("Shape is working");
+         console.log("Shape is working");
+  },
+
+  animateShortestPath(nodesInShortestPathOrder) {
+    
+    for (let i = 1; i < nodesInShortestPathOrder.length; i++) {
+          
+          setTimeout(() => {
+                this.colorNode(nodesInShortestPathOrder[i], "#ed4255");
+          }, i*500);
        
     }
   },
