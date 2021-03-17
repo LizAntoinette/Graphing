@@ -423,32 +423,37 @@ export default {
     //     }
     animateAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder) {
       let stage = this.theStage;
-      var tweenShape, tweenLine;
+      //var tweenShape, tweenLine;
 
       for (let i = 0; i <= visitedNodesInOrder.length; i++) {
-        if (i === visitedNodesInOrder.length) {
-          setTimeout(() => {
-            this.animateShortestPath(nodesInShortestPathOrder);
-          }, 10 * i);
-          return;
-        }
+        var tweenShape, tweenLine;
+         if (i === visitedNodesInOrder.length) {
+             console.log("This got here ...")
+             setTimeout(() => {
+                this.animateShortestPath(nodesInShortestPathOrder);
+             }, 10 * i);
+        //   return;
+         }
         
           const node = visitedNodesInOrder[i];
 
-          var idCircle = "#circle"+node.point1;
+          var idCircle = "#circle"+node.point2;
           console.log(idCircle);
           var shape = stage.findOne(idCircle);
           
 
-          var idLine = "#line"+node.point1+ node.point2;
+          var idLine = "#line"+node.point1+node.point2;
+          console.log(idLine);
           var line = stage.findOne(idLine);
-          console.log(line);
-
-          if (tweenLine ||tweenShape) {
-            tweenLine.destroy();
-            tweenShape.destroy();
-          } 
           
+
+          
+          tweenLine = new Konva.Tween({
+              node: line,
+              fill:"#ed81c4",
+              stroke:"#ed81c4"
+            });
+            console.log("Line is working");
           
             tweenShape = new Konva.Tween({
               node: shape,
@@ -459,16 +464,12 @@ export default {
             console.log("Shape is working");
       
 
-            tweenLine = new Konva.Tween({
-              node: line,
-              fill:"#ed81c4",
-              stroke:"#ed81c4"
-            });
-            console.log("Line is working");
+            
           setTimeout(() => {
-            tweenShape.play();
             tweenLine.play();
-          }, 10 * i);
+            tweenShape.play();
+            
+          }, 70 * i);
 
         }
     },
@@ -476,9 +477,12 @@ export default {
   animateShortestPath(nodesInShortestPathOrder) {
     let stage = this.theStage;
     var tweenShape, tweenLine;
-    for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
+    for (let i = 1; i < nodesInShortestPathOrder.length; i++) {
+      
+        
         const node = nodesInShortestPathOrder[i];
-        var idCircle = "#circle"+node.point1;
+        console.log(node);
+        var idCircle = "#circle"+node.point2;
         console.log(idCircle);
         var shape = stage.findOne(idCircle);
           
@@ -487,11 +491,14 @@ export default {
         var line = stage.findOne(idLine);
         console.log(line);
 
-        if (tweenLine ||tweenShape) {
-          tweenLine.destroy();
-          tweenShape.destroy();
-        } 
+       
           
+        tweenLine = new Konva.Tween({
+          node: line,
+          fill:"#ed81c4",
+          stroke:"#ed81c4"
+        });
+        console.log("Line is working");
         tweenShape = new Konva.Tween({
           node: shape,
           fill:"#ed81c4",
@@ -501,16 +508,11 @@ export default {
         console.log("Shape is working");
       
 
-        tweenLine = new Konva.Tween({
-          node: line,
-          fill:"#ed81c4",
-          stroke:"#ed81c4"
-        });
-        console.log("Line is working");
 
         setTimeout(() => {
-          tweenShape.play();
           tweenLine.play();
+          tweenShape.play();
+          
         }, 50 * i);
     }
   },
