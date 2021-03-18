@@ -492,6 +492,15 @@ export default {
        this.animateAlgorithm(visitedNodesInOrder, calculatedPath);
       
     },
+    visualizeAStar(){
+       const STARTNODE = this.grid[this.startNode][this.startNode];
+       const GOALNODE = this.goalNode;
+       const size = this.list.length;
+       const heuristic = this.createHeuristic;
+       const [visitedNodesInOrder, calculatedPath] = astar(this.grid, STARTNODE, GOALNODE, size, heuristic );
+       
+       this.animateAlgorithm(visitedNodesInOrder, calculatedPath);
+    },
     
   
     runGraph(){
@@ -502,6 +511,9 @@ export default {
           }
           else if(item === "DFS"){
             this.visualizeDFS();
+          }
+          else if (item === "A*"){
+            this.visualizeAStar();
           }
        }
     },
