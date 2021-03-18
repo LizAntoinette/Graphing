@@ -361,9 +361,10 @@ export default {
       this.optionsGoalNode = [];
       this.optionsStartNode = [];
     },
-    createHeuristic(endNode){
+    createHeuristic(node){
        const size = this.list.length;
-       let heuristic = new Array(size);
+       const endNode= this.list[node];
+       let heuristic = [];
        
 
        for(let i =0; i < size; i++){
@@ -411,7 +412,7 @@ export default {
     animateAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder) {
       
       
-      for (let i = 0; i < visitedNodesInOrder.length; i++) {
+      for (let i = 1; i < visitedNodesInOrder.length; i++) {
         
           setTimeout(() => {
                 this.colorNode(visitedNodesInOrder[i], "#ed81c4");
@@ -421,7 +422,7 @@ export default {
         }
         setTimeout(() => {
                 this.animateShortestPath(nodesInShortestPathOrder);
-        }, visitedNodesInOrder.length*1000);
+        }, visitedNodesInOrder.length*800);
         
     },
 
@@ -441,7 +442,7 @@ export default {
           var idLine2 = "line"+node.point2+node.point1;
           let idL =connections.filter(line => line.id === idLine|| line.id === idLine2);
 
-          console.log(idL[0].id);
+        
           var idOfLine = "#"+idL[0].id;
           var line = stage.findOne(idOfLine);
 
@@ -496,10 +497,13 @@ export default {
        const STARTNODE = this.grid[this.startNode][this.startNode];
        const GOALNODE = this.goalNode;
        const size = this.list.length;
-       const heuristic = this.createHeuristic;
+       const heuristic = this.createHeuristic(GOALNODE);
+       console.log(heuristic);
        const [visitedNodesInOrder, calculatedPath] = astar(this.grid, STARTNODE, GOALNODE, size, heuristic );
-       
-       this.animateAlgorithm(visitedNodesInOrder, calculatedPath);
+       console.log("The A* ")
+       console.log(visitedNodesInOrder);
+       console.log(calculatedPath);
+      this.animateAlgorithm(visitedNodesInOrder, calculatedPath);
     },
     
   
