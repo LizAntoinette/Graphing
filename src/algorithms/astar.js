@@ -1,4 +1,4 @@
-export function astar(grid, startNode, finishNode, size) {
+export function astar(grid, startNode, finishNode, size, heuristic) {
   const closedlist = [];
   const openlist = [];
 
@@ -16,17 +16,22 @@ export function astar(grid, startNode, finishNode, size) {
 
     closedlist.push(current);
 
-    if (current === finishNode) return [closedlist, calculatePath(node)];
+    if (current.point2 === finishNode) return [closedlist, calculatePath(current)];
 
     const neighbors = getAllNeighbors(grid, current, size);
 
     for (let i = 0; i < neighbors.length; i++) {
       const nNode = neighbors[i];
+      const hNode = heuristic.find((h) => h.node === nNode.point2);
       nNode.isVisited = true;
       if (closedlist.includes(nNode)) continue;
-
-      nNode.cost.G = calculateCost(nNode, startNode, "E");
-      nNode.cost.H = calculateCost(nNode, finishNode, "E");
+      
+      //Calculate Cost G computes distance from the start node
+      nNode.cost.G = calculateCost(nNode, startNode);
+      
+      //Calculate Cost H computes the heuristics of the node  (distance between node and distance)
+      nNode.cost.H = hNode.hval;
+      //Addition of the node heuristics and distance cost
       nNode.cost.F = nNode.cost.G + nNode.cost.H;
 
       if (!openlist.includes(nNode)) {
@@ -38,33 +43,8 @@ export function astar(grid, startNode, finishNode, size) {
   return [closedlist, calculatePath(finishNode)];
 }
 
-function calculateCost(currentNode, node, distanceType) {
-  switch (distanceType) {
-    // Euclidean Distance
-    case "E":
-      return Math.floor(
-        Math.sqrt(
-          Math.pow(currentNode.row - node.row, 2) +
-            Math.pow(currentNode.col - node.col, 2)
-        ) * 10
-      );
-
-    // Manhattan Distance
-    case "M":
-      return (
-        Math.abs(currentNode.row - node.row) +
-        Math.abs(currentNode.col - node.col)
-      );
-
-    // Diagonal Distance
-    case "D":
-      return Math.max(
-        Math.abs(currentNode.row - node.row),
-        Math.abs(currentNode.col - node.col)
-      );
-    default:
-      return 0;
-  }
+function calculateCost(currentNode, node) {
+  
 }
 
 function getAllNeighbors(grid, node, size) {

@@ -390,37 +390,24 @@ export default {
       console.log('This is the Initialized Grid');
       console.log(this.grid);
     },
+
+    //
     createNode(x, y, dist){
       return {
         point1: x,
         point2: y,
         distance: dist,
         isVisited: false,
-        previousNode: null
+        previousNode: null,
+        cost: {
+                F: Infinity,
+                G: Infinity,
+                H: Infinity,
+            },
       }
 
     },
-    // animateAlgorithm(visitedNodesInOrder, calculatedPath){
-
-    // },
-    // visualizeAlgorithm(selectedAlgo){
-    //     const STARTNODE = this.grid[this.startNode][this.startNode];
-    //     const GOALNODE = this.goalNode;
-    //     const size = this.list.length;
-    //     const heuristic = this.heuristic;
-    //     // const [visitedNodesInOrder, calculatedPath]  = [[],[]];
-    //     // if(selectedAlgo == "BFS"){
-    //       [visitedNodesInOrder, calculatedPath] =  bfs(this.grid, STARTNODE, GOALNODE, size);
-    //     }
-    //     else if(selectedAlgo === "DFS"){
-    //       [visitedNodesInOrder, calculatedPath] =  dfs(this.grid, STARTNODE, GOALNODE, size);
-    //     }
-    //     else if (selectedAlgo == "A*"){
-    //        [visitedNodesInOrder, calculatedPath] = astar()
-    //     }
-    //     else{
-    //       console.log("Select Algorithm to Visualize");
-    //     }
+    
     animateAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder) {
       
       
@@ -519,41 +506,6 @@ export default {
        }
     },
 
-    //     console.log("DFS visited nodes in order:");
-    //     console.log(visitedNodesInOrder);
-    //     console.log("DFS the calculated path:");
-    //     console.log(calculatedPath);
-    //     // this.animateAlgorithm(visitedNodesInOrder, calculatedPath);
-    // },
-    
-
-    //visualizeDijkstra() {
-  //   const {grid} = this.state;
-  //   const startNode = grid[START_NODE_ROW][START_NODE_COL];
-  //   const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
-  //   const visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
-  //   const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
-  //   this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
-  // }
-    // runGraph(){
-    //    if(this.runnableGraph){
-          
-    //         this.visualizeAlgorithm(this.selectedItem);
-          
-
-    //    }
-    // },
-    // aStarMethod() {},
-    // greedyBFS() {},
-    // bfs() {},
-    // dfs() {},
-    // uniformCost() {},
-    // showCoords(event) {
-    //   this.coor_x = event.clientX;
-    //   this.coor_y = event.clientY;
-    //   let coor = "X coords: " + this.coor_x + ", Y coords: " + this.coor_y;
-
-    // }
   },
 };
 </script>
