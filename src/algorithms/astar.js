@@ -16,7 +16,8 @@ export function astar(grid, startNode, finishNode, size, heuristic) {
 
     closedlist.push(current);
 
-    if (current.point2 === finishNode) return [closedlist, calculatePath(current)];
+    if (current.point2 === finishNode)
+      return [closedlist, calculatePath(current)];
 
     const neighbors = getAllNeighbors(grid, current, size);
 
@@ -25,10 +26,7 @@ export function astar(grid, startNode, finishNode, size, heuristic) {
       const hNode = heuristic.find((h) => h.node === nNode.point2);
       nNode.isVisited = true;
       if (closedlist.includes(nNode)) continue;
-      
-      //Calculate Cost G computes distance from the start node
-      nNode.cost.G = calculateCost(nNode, startNode);
-      
+
       //Calculate Cost H computes the heuristics of the node  (distance between node and distance)
       nNode.cost.H = hNode.hval;
       //Addition of the node heuristics and distance cost
@@ -43,10 +41,6 @@ export function astar(grid, startNode, finishNode, size, heuristic) {
   return [closedlist, calculatePath(finishNode)];
 }
 
-function calculateCost(currentNode, node) {
-  
-}
-
 function getAllNeighbors(grid, node, size) {
   const neighbors = [];
   const point2 = node.point2;
@@ -55,6 +49,8 @@ function getAllNeighbors(grid, node, size) {
     var tempNode = grid[point2][i];
     if (!tempNode.isVisited && tempNode.distance > 0) {
       grid[i][point2].isVisited = true;
+      grid[i][point2].cost.G += node.cost.G;
+      grid[point2][i].cost.G += node.cost.G;
       neighbors.push(tempNode);
     }
   }
