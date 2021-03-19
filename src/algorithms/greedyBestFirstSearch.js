@@ -1,46 +1,69 @@
-// import PriorityQueue from 'js-priority-queue'
+export function greedyBFS(grid, startNode, finishNode) {
+  let openList = []; //open list unvisited Noted
+  let closedList = []; //closed list visited Nodes
+  startNode.distance = 0;
+  openList.push(startNode);
 
-// export function greedyBestFirstSearch(startNode, endNode, graph, heuristic, size){
-//   let visited = Array(size).fill(false);
-//   visited[startNode] = true;
-//   let pq = new PriorityQueue();
-//   pq.queue((0, startNode));
-//   let path = [];
-//   while(pq.length !== 0){
-//       var node = pq.dequeue();
-//       path.push(node);
-//       if(node === endNode){
-//         break;
-//       }
+  while (!!openList.length) {
+    openList.sort((a, b) => a.totalDistance - b.totalDistance);
+    let closestNode = openList.shift();
+    if (closestNode === finishNode) return closedList;
 
-//       for(let i = 0; i< size; i++){
-//         if(!visited[i]){
-//           visited[i] = true;
-//           pq.enqueue((graph[i], i));
-//         }
-//       }
+    closestNode.isVisited = true;
+    closedList.push(closestNode);
 
+    let neighbours = getNeighbours(closestNode, grid);
+    for (let neighbour of neighbours) {
+      let distance = closestNode.distance + 1;
+      //f(n) = h(n)
+      if (neighbourNotInopenList(neighbour, openList)) {
+        openList.unshift(neighbour);
+        neighbour.distance = distance;
+        neighbour.totalDistance = manhattenDistance(neighbour, finishNode);
+        neighbour.previousNode = closestNode;
+      } else if (distance < neighbour.distance) {
+        neighbour.distance = distance;
+        neighbour.totalDistance = manhattenDistance(neighbour, finishNode);
+        neighbour.previousNode = closestNode;
+      }
+    }
+  }
+  return closedList;
+}
 
-//   }
-//   return path;
+function getNeighbours(node, grid) {
+  let neighbours = [];
+  let { row, col } = node;
+  if (row !== 0) neighbours.push(grid[row - 1][col]);
+  if (col !== grid[0].length - 1) neighbours.push(grid[row][col + 1]);
+  if (row !== grid.length - 1) neighbours.push(grid[row + 1][col]);
+  if (col !== 0) neighbours.push(grid[row][col - 1]);
+  return neighbours.filter(
+    (neighbour) => !neighbour.isWall && !neighbour.isVisited
+  );
+}
 
-// }
+function manhattenDistance(node, finishNode) {
+  let x = Math.abs(node.row - finishNode.row);
+  let y = Math.abs(node.col - finishNode.col);
+  return x + y;
+}
 
-// // def best_first_search(source, target, n):
-// //     visited = [0] * n
-// //     visited = True
-// //     pq = PriorityQueue()
-// //     pq.put((0, source))
-// //     while pq.empty() == False:
-// //         u = pq.get()[1]
-// //         # Displaying the path having lowest cost
-// //         print(u, end=" ")
-// //         if u == target:
-// //             break
- 
-// //         for v, c in graph[u]:
-// //             if visited[v] == False:
-// //                 visited[v] = True
-// //                 pq.put((c, v))
-// //     print()
- 
+function neighbourNotInopenList(neighbour, openList) {
+  for (let node of openList) {
+    if (node.row === neighbour.row && node.col === neighbour.col) {
+      return false;
+    }
+  }
+  return true;
+}
+
+export function getNodesInShortestPathOrderGreedyBFS(finishNode) {
+  let nodesInShortestPathOrder = [];
+  let currentNode = finishNode;
+  while (currentNode !== null) {
+    nodesInShortestPathOrder.unshift(currentNode);
+    currentNode = currentNode.previousNode;
+  }
+  return nodesInShortestPathOrder;
+}
