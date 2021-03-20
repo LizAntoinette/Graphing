@@ -87,7 +87,7 @@
                 x: item.x,
                 y: item.y,
                 
-                radius: 10,
+                radius: 15,
                 fill: '#a20417',
                 //draggable:true,
                 stroke: '#a20417',
@@ -99,8 +99,8 @@
               v-for="(item, index) in list"
               :key="item.id"
               :config="{
-                x: item.x + 6,
-                y: item.y + 6,
+                x: item.x + 11,
+                y: item.y + 11,
                 text: index,
                 fontSize: 15,
                 width: 300,
@@ -124,9 +124,9 @@
 <script>
 import {bfs} from '../algorithms/breadthFirstSearch';
 import {dfs} from '../algorithms/depthFirstSearch';
-//import greedyBFS from '../algorithms/greedyBestFirstSearch';
+import {greedyBFS} from '../algorithms/greedyBestFirstSearch';
 import {astar} from '../algorithms/astar';
-// import uniformCost from '../algorithms/uniformCost';
+import {uniformCost} from '../algorithms/uniformCost';
 // import csp from '../algorithms/csp';
 // import generic from '../algorithms/generic';
 
@@ -505,7 +505,30 @@ export default {
        console.log(calculatedPath);
       this.animateAlgorithm(visitedNodesInOrder, calculatedPath);
     },
-    
+    visualizeGreedyBFS(){
+       const STARTNODE = this.grid[this.startNode][this.startNode];
+       const GOALNODE = this.goalNode;
+       const size = this.list.length;
+       const heuristic = this.createHeuristic(GOALNODE);
+       console.log(heuristic);
+       const [visitedNodesInOrder, calculatedPath] = greedyBFS(this.grid, STARTNODE, GOALNODE, size, heuristic );
+       console.log("The Greedy BFS ")
+       console.log(visitedNodesInOrder);
+       console.log(calculatedPath);
+      this.animateAlgorithm(visitedNodesInOrder, calculatedPath);
+    },
+    visualizeUniformCost(){
+       const STARTNODE = this.grid[this.startNode][this.startNode];
+       const GOALNODE = this.goalNode;
+       const size = this.list.length;
+       const heuristic = this.createHeuristic(GOALNODE);
+       console.log(heuristic);
+       const [visitedNodesInOrder, calculatedPath] = astar(this.grid, STARTNODE, GOALNODE, size, heuristic );
+       console.log("The A* ")
+       console.log(visitedNodesInOrder);
+       console.log(calculatedPath);
+      this.animateAlgorithm(visitedNodesInOrder, calculatedPath);
+    },
   
     runGraph(){
        if(this.runnableGraph){
@@ -518,6 +541,12 @@ export default {
           }
           else if (item === "A*"){
             this.visualizeAStar();
+          }
+          else if (item === "Greedy BFS"){
+            this.visualizeGreedyBFS();
+          }
+          else if (item === "Uniform Cost"){
+            this.visualizeUniformCost();
           }
        }
     },

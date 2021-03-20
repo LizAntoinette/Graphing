@@ -1,69 +1,68 @@
-export function greedyBFS(grid, startNode, finishNode) {
-  let openList = []; //open list unvisited Noted
-  let closedList = []; //closed list visited Nodes
-  startNode.distance = 0;
-  openList.push(startNode);
+export function greedyBFS(grid, startNode, finishNode, size, heuristic) {
+  const closedlist = [];
+  const openlist = [];
 
-  while (!!openList.length) {
-    openList.sort((a, b) => a.totalDistance - b.totalDistance);
-    let closestNode = openList.shift();
-    if (closestNode === finishNode) return closedList;
+  const startH = heuristic.find((h) => h.node === startNode.point2);
+  startNode.cost = {
+    F: 0,
+    G: 0,
+    H: startH.hval
+  };
 
-    closestNode.isVisited = true;
-    closedList.push(closestNode);
+  openlist.push(startNode);
 
-    let neighbours = getNeighbours(closestNode, grid);
-    for (let neighbour of neighbours) {
-      let distance = closestNode.distance + 1;
-      //f(n) = h(n)
-      if (neighbourNotInopenList(neighbour, openList)) {
-        openList.unshift(neighbour);
-        neighbour.distance = distance;
-        neighbour.totalDistance = manhattenDistance(neighbour, finishNode);
-        neighbour.previousNode = closestNode;
-      } else if (distance < neighbour.distance) {
-        neighbour.distance = distance;
-        neighbour.totalDistance = manhattenDistance(neighbour, finishNode);
-        neighbour.previousNode = closestNode;
+  while (!!openlist.length) {
+    openlist.sort((a, b) => a.cost.F - b.cost.F);
+    const current = openlist.shift();
+
+    closedlist.push(current);
+
+    if (current.point2 === finishNode)
+      return [closedlist, calculatePath(current)];
+
+    const neighbors = getAllNeighbors(grid, current, size);
+
+    for (let i = 0; i < neighbors.length; i++) {
+      const nNode = neighbors[i];
+      const hNode = heuristic.find((h) => h.node === nNode.point2);
+      nNode.isVisited = true;
+      if (closedlist.includes(nNode)) continue;
+
+      //Calculate Cost H computes the heuristics of the node  (distance between node and distance)
+      nNode.cost.H = hNode.hval;
+      //Addition of the node heuristics and distance cost
+      nNode.cost.F = nNode.cost.H;
+
+      if (!openlist.includes(nNode)) {
+        nNode.previousNode = current;
+        openlist.push(nNode);
       }
     }
   }
-  return closedList;
+  return [closedlist, calculatePath(finishNode)];
 }
 
-function getNeighbours(node, grid) {
-  let neighbours = [];
-  let { row, col } = node;
-  if (row !== 0) neighbours.push(grid[row - 1][col]);
-  if (col !== grid[0].length - 1) neighbours.push(grid[row][col + 1]);
-  if (row !== grid.length - 1) neighbours.push(grid[row + 1][col]);
-  if (col !== 0) neighbours.push(grid[row][col - 1]);
-  return neighbours.filter(
-    (neighbour) => !neighbour.isWall && !neighbour.isVisited
-  );
-}
+function getAllNeighbors(grid, node, size) {
+  const neighbors = [];
+  const point2 = node.point2;
 
-function manhattenDistance(node, finishNode) {
-  let x = Math.abs(node.row - finishNode.row);
-  let y = Math.abs(node.col - finishNode.col);
-  return x + y;
-}
+  for (let i = 0; i < size; i++) {
+    var tempNode = grid[point2][i];
+    if (!tempNode.isVisited && tempNode.distance > 0) {
+      grid[i][point2].isVisited = true;
 
-function neighbourNotInopenList(neighbour, openList) {
-  for (let node of openList) {
-    if (node.row === neighbour.row && node.col === neighbour.col) {
-      return false;
+      neighbors.push(tempNode);
     }
   }
-  return true;
+  return neighbors;
 }
 
-export function getNodesInShortestPathOrderGreedyBFS(finishNode) {
-  let nodesInShortestPathOrder = [];
+function calculatePath(finishNode) {
+  const shortestPathNodes = [];
   let currentNode = finishNode;
   while (currentNode !== null) {
-    nodesInShortestPathOrder.unshift(currentNode);
+    shortestPathNodes.unshift(currentNode);
     currentNode = currentNode.previousNode;
   }
-  return nodesInShortestPathOrder;
+  return shortestPathNodes;
 }
